@@ -10,3 +10,4 @@ This is the Weeping Wrangler's AI-Generated Knowledge Graph.
 
 ## Contributors
 - Hui Qian
+- Tian Zhuoyu
