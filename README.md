@@ -8,5 +8,5 @@ This is the Weeping Wrangler's AI-Generated Knowledge Graph.
 
 ### Synthetic
 
-### Contributors
+## Contributors
 - Hui Qian
