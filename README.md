@@ -10,4 +10,5 @@ This is the Weeping Wrangler's AI-Generated Knowledge Graph.
 
 ## Contributors
 - Hui Qian
+- Kaung Htet Wai Yan
 - Tian Zhuoyu
