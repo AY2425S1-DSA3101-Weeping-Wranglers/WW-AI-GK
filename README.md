@@ -13,3 +13,4 @@ This is the Weeping Wrangler's AI-Generated Knowledge Graph.
 - Kaung Htet Wai Yan
 - Tian Zhuoyu
 - Chen Yuxi
+- Tan Shu Hui
