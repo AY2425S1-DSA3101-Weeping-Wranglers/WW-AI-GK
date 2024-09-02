@@ -22,3 +22,4 @@ This is the Weeping Wrangler's AI-Generated Knowledge Graph.
 - Tan Shu Hui (Amanda)
 - Aidan Ong Zongren
 - Xie Zebang
+- Nguyen Xuan Nam
