@@ -1,0 +1,41 @@
+#,Company,Ticker,Year of 10-K ,URL
+1,Apple Inc,AAPL,2023,https://www.sec.gov/Archives/edgar/data/320193/000032019323000106/aapl-20230930.htm
+2,NVIDIA Corp,NVDA,2024,https://www.sec.gov/ix?doc=/Archives/edgar/data/0001045810/000104581024000029/nvda-20240128.htm
+3,Microsoft Corp,MSFT,2024,https://www.sec.gov/Archives/edgar/data/789019/000095017024087843/msft-20240630.htm
+4,Broadcom Inc,AVGO,2023,https://www.sec.gov/ix?doc=/Archives/edgar/data/1730168/000173016823000096/avgo-20231029.htm
+5,Meta Platforms Inc,META,2024,https://www.sec.gov/Archives/edgar/data/1326801/000132680124000012/meta-20231231.htm
+6,Amazon.com Inc,AMZN,2024,https://www.sec.gov/Archives/edgar/data/1018724/000101872424000008/amzn-20231231.htm
+7,Costco Wholesale Corp,COST,2023,https://www.sec.gov/ix?doc=/Archives/edgar/data/909832/000090983223000042/cost-20230903.htm
+8,Tesla Inc,TSLA,2020,https://www.sec.gov/Archives/edgar/data/1318605/000156459021004599/tsla-10k_20201231.htm
+9,Alphabet Inc,GOOGL,2024,https://www.sec.gov/Archives/edgar/data/1652044/000165204424000022/goog-20231231.htm
+10,Alphabet Inc,GOOG,,same as above
+11,Netflix Inc,NFLX,2023,https://www.sec.gov/ix?doc=/Archives/edgar/data/1065280/000106528024000030/nflx-20231231.htm
+12,Adobe Inc,ADBE,2024,https://www.sec.gov/Archives/edgar/data/796343/000079634324000006/adbe-20231201.htm
+13,PepsiCo Inc,PEP,2024,https://www.sec.gov/Archives/edgar/data/77476/000007747624000008/pep-20231230.htm
+14,Advanced Micro Devices Inc,AMD,2024,https://www.sec.gov/Archives/edgar/data/2488/000000248824000012/amd-20231230.htm
+15,T-Mobile US Inc,TMUS,2024,https://www.sec.gov/Archives/edgar/data/1283699/000128369924000008/tmus-20231231.htm
+16,Linde PLC,LIN,2024,https://www.sec.gov/Archives/edgar/data/1707925/000162828024007424/lin-20231231.htm
+17,Cisco Systems Inc,CSCO,2024,https://www.sec.gov/Archives/edgar/data/858877/000085887724000017/csco-20240727.htm
+18,QUALCOMM Inc,QCOM,2023,https://www.sec.gov/Archives/edgar/data/804328/000080432823000055/qcom-20230924.htm
+19,Texas Instruments Inc,TXN,2023,https://www.sec.gov/Archives/edgar/data/97476/000009747624000007/txn-20231231.htm
+20,Amgen Inc,AMGN,2024,https://www.sec.gov/Archives/edgar/data/318154/000031815424000011/amgn-20231231.htm
+21,Intuit Inc,INTU,2024,https://www.sec.gov/Archives/edgar/data/896878/000089687824000039/intu-20240731.htm
+22,Intuitive Surgical Inc,ISRG,2024,https://www.sec.gov/Archives/edgar/data/1035267/000103526724000021/isrg-20231231.htm
+23,Applied Materials Inc,AMAT,2023,https://www.sec.gov/Archives/edgar/data/6951/000000695123000041/amat-20231029.htm
+24,Comcast Corp,CMCSA,2024,https://www.sec.gov/Archives/edgar/data/1166691/000116669124000011/cmcsa-20231231.htm
+25,Honeywell International Inc,HON,,
+26,Booking Holdings Inc,BKNG,,
+27,Regeneron Pharmaceuticals Inc,REGN,,
+28,Vertex Pharmaceuticals Inc,VRTX,,
+29,Palo Alto Networks Inc,PANW,,
+30,Analog Devices Inc,ADI,,
+31,Automatic Data Processing Inc,ADP,,
+32,Starbucks Corp,SBUX,,
+33,KLA Corp,KLAC,,
+34,Micron Technology Inc,MU,,
+35,Lam Research Corp,LRCX,,
+36,MercadoLibre Inc,MELI,,
+37,Gilead Sciences Inc,GILD,,
+38,Mondelez International Inc,MDLZ,,
+39,Intel Corp,INTC,,
+40,Cintas Corp,CTAS,,
