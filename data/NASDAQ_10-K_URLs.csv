@@ -1,0 +1,41 @@
+ticker,cik,Company Name,Latest Filing Year,Filing URL
+AMD,2488,ADVANCED MICRO DEVICES INC,2024,https://www.sec.gov/Archives/edgar/data/2488/000000248824000012/amd-20231230.htm
+ADI,6281,ANALOG DEVICES INC,2023,https://www.sec.gov/Archives/edgar/data/6281/000000628123000203/adi-20231028.htm
+AMAT,6951,APPLIED MATERIALS INC /DE,2023,https://www.sec.gov/Archives/edgar/data/6951/000000695123000041/amat-20231029.htm
+ADP,8670,AUTOMATIC DATA PROCESSING INC,2024,https://www.sec.gov/Archives/edgar/data/8670/000000867024000024/adp-20240630.htm
+LRCX,707549,LAM RESEARCH CORP,2024,https://www.sec.gov/Archives/edgar/data/707549/000070754924000106/lrcx-20240630.htm
+MU,723125,MICRON TECHNOLOGY INC,2023,https://www.sec.gov/Archives/edgar/data/723125/000072312523000054/mu-20230831.htm
+CTAS,723254,CINTAS CORP,2024,https://www.sec.gov/Archives/edgar/data/723254/000072325424000036/ctas-20240531.htm
+CMCSA,1166691,COMCAST CORP,2024,https://www.sec.gov/Archives/edgar/data/1166691/000116669124000011/cmcsa-20231231.htm
+HON,773840,HONEYWELL INTERNATIONAL INC,2024,https://www.sec.gov/Archives/edgar/data/773840/000077384024000014/hon-20231231.htm
+MSFT,789019,MICROSOFT CORP,2024,https://www.sec.gov/Archives/edgar/data/789019/000095017024087843/msft-20240630.htm
+ADBE,796343,ADOBE INC.,2024,https://www.sec.gov/Archives/edgar/data/796343/000079634324000006/adbe-20231201.htm
+QCOM,804328,QUALCOMM INC/DE,2023,https://www.sec.gov/Archives/edgar/data/804328/000080432823000055/qcom-20230924.htm
+SBUX,829224,STARBUCKS CORP,2023,https://www.sec.gov/Archives/edgar/data/829224/000082922423000058/sbux-20231001.htm
+TMUS,1283699,"T-Mobile US, Inc.",2024,https://www.sec.gov/Archives/edgar/data/1283699/000128369924000008/tmus-20231231.htm
+CSCO,858877,"CISCO SYSTEMS, INC.",2024,https://www.sec.gov/Archives/edgar/data/858877/000085887724000017/csco-20240727.htm
+TSLA,1318605,"Tesla, Inc.",2024,https://www.sec.gov/Archives/edgar/data/1318605/000162828024002390/tsla-20231231.htm
+REGN,872589,"REGENERON PHARMACEUTICALS, INC.",2024,https://www.sec.gov/Archives/edgar/data/872589/000180422024000009/regn-20231231.htm
+META,1326801,"Meta Platforms, Inc.",2024,https://www.sec.gov/Archives/edgar/data/1326801/000132680124000012/meta-20231231.htm
+PANW,1327567,Palo Alto Networks Inc,2024,https://www.sec.gov/Archives/edgar/data/1327567/000132756724000029/panw-20240731.htm
+VRTX,875320,VERTEX PHARMACEUTICALS INC / MA,2024,https://www.sec.gov/Archives/edgar/data/875320/000087532024000062/vrtx-20231231.htm
+GILD,882095,"GILEAD SCIENCES, INC.",2024,https://www.sec.gov/Archives/edgar/data/882095/000088209524000007/gild-20231231.htm
+INTC,50863,INTEL CORP,2024,https://www.sec.gov/Archives/edgar/data/50863/000005086324000010/intc-20231230.htm
+INTU,896878,INTUIT INC.,2024,https://www.sec.gov/Archives/edgar/data/896878/000089687824000039/intu-20240731.htm
+COST,909832,COSTCO WHOLESALE CORP /NEW,2023,https://www.sec.gov/Archives/edgar/data/909832/000090983223000042/cost-20230903.htm
+PEP,77476,PEPSICO INC,2024,https://www.sec.gov/Archives/edgar/data/77476/000007747624000008/pep-20231230.htm
+AMZN,1018724,AMAZON COM INC,2024,https://www.sec.gov/Archives/edgar/data/1018724/000101872424000008/amzn-20231231.htm
+GOOGL,1652044,Alphabet Inc.,2024,https://www.sec.gov/Archives/edgar/data/1652044/000165204424000022/goog-20231231.htm
+GOOG,1652044,Alphabet Inc.,2024,https://www.sec.gov/Archives/edgar/data/1652044/000165204424000022/goog-20231231.htm
+TXN,97476,TEXAS INSTRUMENTS INC,2024,https://www.sec.gov/Archives/edgar/data/97476/000009747624000007/txn-20231231.htm
+ISRG,1035267,INTUITIVE SURGICAL INC,2024,https://www.sec.gov/Archives/edgar/data/1035267/000103526724000021/isrg-20231231.htm
+LIN,1707925,LINDE PLC,2024,https://www.sec.gov/Archives/edgar/data/1707925/000162828024007424/lin-20231231.htm
+AVGO,1730168,Broadcom Inc.,2023,https://www.sec.gov/Archives/edgar/data/1730168/000173016823000096/avgo-20231029.htm
+NVDA,1045810,NVIDIA CORP,2024,https://www.sec.gov/Archives/edgar/data/1045810/000104581024000029/nvda-20240128.htm
+NFLX,1065280,NETFLIX INC,2024,https://www.sec.gov/Archives/edgar/data/1065280/000106528024000030/nflx-20231231.htm
+AMGN,318154,AMGEN INC,2024,https://www.sec.gov/Archives/edgar/data/318154/000031815424000011/amgn-20231231.htm
+KLAC,319201,KLA CORP,2024,https://www.sec.gov/Archives/edgar/data/319201/000031920124000021/klac-20240630.htm
+AAPL,320193,Apple Inc.,2023,https://www.sec.gov/Archives/edgar/data/320193/000032019323000106/aapl-20230930.htm
+BKNG,1075531,Booking Holdings Inc.,2024,https://www.sec.gov/Archives/edgar/data/1075531/000107553124000014/bkng-20231231.htm
+MELI,1099590,MERCADOLIBRE INC,2024,https://www.sec.gov/Archives/edgar/data/1099590/000109959024000008/meli-20231231.htm
+MDLZ,1103982,"Mondelez International, Inc.",2024,https://www.sec.gov/Archives/edgar/data/1103982/000110398224000019/mdlz-20231231.htm
