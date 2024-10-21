@@ -1,0 +1,2 @@
+CREATE CONSTRAINT region_name_unique IF NOT EXISTS
+FOR (r:Region) REQUIRE r.name IS UNIQUE;

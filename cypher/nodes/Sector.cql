@@ -1,0 +1,1 @@
+MERGE (:Sector{gics: $gics, name: $name});

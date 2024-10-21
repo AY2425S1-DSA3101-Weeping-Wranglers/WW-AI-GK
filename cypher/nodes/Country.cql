@@ -1,0 +1,1 @@
+MERGE (:Country{iso3: $iso3, name: $name, iso2: $iso2});

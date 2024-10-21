@@ -1,0 +1,1 @@
+MERGE (:Industry{gics: $gics, name: $name, description: $description});

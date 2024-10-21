@@ -155,6 +155,7 @@ Pygments==2.18.0
 PyJWT==2.9.0
 pyparsing==3.1.4
 pyproj==3.6.1
+pyreadr
 pytest==8.3.2
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1

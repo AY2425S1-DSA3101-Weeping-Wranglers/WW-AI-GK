@@ -1,0 +1,2 @@
+CREATE CONSTRAINT sector_name_unique IF NOT EXISTS
+FOR (s:Sector) REQUIRE s.name IS UNIQUE;
