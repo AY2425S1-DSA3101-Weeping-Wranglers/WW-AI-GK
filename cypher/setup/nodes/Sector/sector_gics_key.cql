@@ -1,2 +1,0 @@
-CREATE CONSTRAINT sector_gics_key IF NOT EXISTS
-FOR (s:Sector) REQUIRE s.gics IS NODE KEY;

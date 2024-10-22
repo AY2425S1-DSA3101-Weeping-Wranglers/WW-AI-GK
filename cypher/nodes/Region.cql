@@ -1,1 +1,0 @@
-MERGE (:Region{m49: $m49, name: $name});

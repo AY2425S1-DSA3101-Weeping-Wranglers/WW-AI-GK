@@ -1,2 +1,0 @@
-CREATE CONSTRAINT country_iso2_unique IF NOT EXISTS
-FOR (c:Country) REQUIRE c.iso2 IS UNIQUE;

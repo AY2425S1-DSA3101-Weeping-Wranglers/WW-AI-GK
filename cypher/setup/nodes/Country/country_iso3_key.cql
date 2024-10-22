@@ -1,2 +1,0 @@
-CREATE CONSTRAINT country_iso3_key IF NOT EXISTS
-FOR (c:Country) REQUIRE c.iso3 IS NODE KEY;
