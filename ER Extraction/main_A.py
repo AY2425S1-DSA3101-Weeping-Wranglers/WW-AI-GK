@@ -147,7 +147,7 @@ def wikipedia_ner_rel_pipeline(ticker):
     return (ents, rels)
 
 def sec_10k_ner_rel_pipeline(ticker):
-    dbpath = 'ecmdatabase.db'
+    dbpath = 'data/ecmdatabase.db'
     con = sqlite3.connect(f"file:{dbpath}?mode=ro", uri=True)
     with con:
         result = con.execute(f"SELECT * from companies WHERE stock_symbol = '{ticker}';")
@@ -370,7 +370,7 @@ def create_produces_rel(c_node, pdt_node):
     return c_pdt_rel
 
 def generate_json_schema(json, offset = 0):
-    dbpath = "ecmdatabase.db"
+    dbpath = 'ecmdatabase.db'
     con = sqlite3.connect(f"file:{dbpath}?mode=ro", uri=True)
 
     def fill_entities(ents, c_name):
