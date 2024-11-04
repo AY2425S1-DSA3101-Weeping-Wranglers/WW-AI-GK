@@ -147,7 +147,7 @@ def wikipedia_ner_rel_pipeline(ticker):
     return (ents, rels)
 
 def sec_10k_ner_rel_pipeline(ticker):
-    dbpath = 'data/ecmdatabase.db'
+    dbpath = 'ecmdatabase.db'
     con = sqlite3.connect(f"file:{dbpath}?mode=ro", uri=True)
     with con:
         result = con.execute(f"SELECT * from companies WHERE stock_symbol = '{ticker}';")
@@ -282,7 +282,7 @@ def create_country_node(name,iso3=None,iso2=None, population = None, gdp = None,
         cnty_node["iso2"] = pc.country_name_to_country_alpha2(name)
         cnty_node["iso3"] = pc.country_name_to_country_alpha3(name)
     except KeyError:
-        print(f"{cnty_node["name"]} could not be mapped to iso code")
+        print(f"{cnty_node['name']} could not be mapped to iso code")
     
     cnty_node["population"] = random.randint(5,1400) #in millions
     cnty_node["gdp"] = random.randint(1,20000) #in billions
@@ -370,7 +370,7 @@ def create_produces_rel(c_node, pdt_node):
     return c_pdt_rel
 
 def generate_json_schema(json, offset = 0):
-    dbpath = 'data/ecmdatabase.db'
+    dbpath = "ecmdatabase.db"
     con = sqlite3.connect(f"file:{dbpath}?mode=ro", uri=True)
 
     def fill_entities(ents, c_name):
@@ -460,7 +460,6 @@ def generate_json_schema(json, offset = 0):
 
 empty_schema = create_json_schema()
 print("Generating schema")
-
 try:
     kg_json = generate_json_schema(empty_schema, offset = 0)
     with open('nasdaq_kg_schema.json', 'w') as f:
