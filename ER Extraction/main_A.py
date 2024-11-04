@@ -147,7 +147,7 @@ def wikipedia_ner_rel_pipeline(ticker):
     return (ents, rels)
 
 def sec_10k_ner_rel_pipeline(ticker):
-    dbpath = 'data/ecmdatabase.db'
+    dbpath = 'ecmdatabase.db'
     con = sqlite3.connect(f"file:{dbpath}?mode=ro", uri=True)
     with con:
         result = con.execute(f"SELECT * from companies WHERE stock_symbol = '{ticker}';")
