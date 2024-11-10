@@ -17,6 +17,16 @@ FIELDS = "entities,facts"
 HOST = "nl.diffbot.com"
 
 def get_request(payload):
+  '''
+  Sends a POST request to the API with the given payload, retrieves JSON data from the response, and handles errors gracefully.
+
+    Parameters:
+
+    payload (dict): Dictionary containing the request data, including text content, language, and format.
+    Returns:
+
+    dict: Parsed JSON response from the API if successful; otherwise, prints error information and returns None.
+  '''
   res = requests.post("https://{}/v1/?fields={}&token={}".format(HOST, FIELDS, TOKEN), json=payload)
   ret = None
   try:
@@ -28,6 +38,16 @@ def get_request(payload):
   return ret
 
 def extract_entites(res):
+    '''
+    Extracts entities from the API response and filters them by salience. Adds a label to classify entities as company, industry, country, location, or product.
+
+    Parameters:
+
+    res (dict): The JSON response from the API containing entities data.
+    Returns:
+
+    DataFrame: Filtered entities with columns name, salience, and Labels.
+    '''
     ents = pd.DataFrame.from_dict(res["entities"])
     if not ents.empty:
         salient_ents = ents[ents["salience"] > 0.5]
@@ -54,6 +74,18 @@ def extract_entites(res):
     return ents
 
 def extract_relationships(res):
+    '''
+    Description:
+    Processes the API response to extract relationships. Adds columns for entity names, properties, values, and any relevant evidence.
+
+    Parameters:
+
+    res (dict): JSON response from the API containing relationship data.
+    Returns:
+
+    DataFrame: Filtered relationships with columns entity, property, value, and evidence.
+
+    '''
     rels =  pd.DataFrame.from_dict(res["facts"])
     if not rels.empty:
         for i, row in rels.iterrows():
@@ -69,7 +101,18 @@ def extract_relationships(res):
 
 
 def get_company_ticker(self):
+    '''
+    Description:
+    Retrieves the ticker symbol of a company from a Yahoo Finance search result.
 
+    Parameters:
+
+    self (str): Company name.
+    Returns:
+
+    str: The extracted ticker symbol from Yahoo Finance.
+
+    '''
     searchval = 'yahoo finance '+ self
     link = []
     #limits to the first link
@@ -88,6 +131,19 @@ def get_company_ticker(self):
 
 
 def get_company_name(ticker):
+    
+    '''
+    Fetches the company's full name using the ticker symbol by querying Yahoo Finance.
+
+    Parameters:
+
+    ticker (str): Company ticker symbol.
+    Returns:
+
+    str: Full company name if found, else returns the ticker symbol.
+
+    '''
+
     try:
         ticker_info = Ticker(ticker)
         company_name = ticker_info.quote_type[ticker]['longName']
@@ -98,6 +154,16 @@ def get_company_name(ticker):
         return ticker
 
 def get_wikipedia_article(company_name_or_ticker):
+    
+    '''
+    Parameters:
+
+    company_name_or_ticker (str): The name or ticker symbol of the company.
+    Returns:
+
+    str: Combined title and full text of the Wikipedia article if successful, otherwise returns None.
+
+    '''
     search_url = f"https://en.wikipedia.org/wiki/{company_name_or_ticker}"
     
     try:
@@ -123,6 +189,17 @@ def get_wikipedia_article(company_name_or_ticker):
         return None
 
 def wikipedia_ner_rel_pipeline(ticker):
+    '''
+    Extracts entities and relationships from a company's Wikipedia article using NLP API requests.
+
+    Parameters:
+
+    ticker (str): Company ticker symbol.
+    Returns:
+
+    tuple: DataFrames of entities and relationships extracted from the Wikipedia article.
+
+    '''
     company_name = get_company_name(ticker)
     article = get_wikipedia_article(company_name)
     if article is None:
@@ -147,6 +224,17 @@ def wikipedia_ner_rel_pipeline(ticker):
     return (ents, rels)
 
 def sec_10k_ner_rel_pipeline(ticker):
+    '''
+    Extracts entities and relationships from SEC 10-K's Item 1 and Item 7 forms for the specified company using Diffbot's NLP API requests.
+
+    Parameters:
+
+    ticker (str): Company ticker symbol.
+    Returns:
+
+    tuple: DataFrames of entities and relationships extracted from 10-K sections.
+    '''
+
     dbpath = 'ecmdatabase.db'
     con = sqlite3.connect(f"file:{dbpath}?mode=ro", uri=True)
     with con:
@@ -183,6 +271,15 @@ def sec_10k_ner_rel_pipeline(ticker):
     return (ents,rels)
 
 def create_json_schema():
+    '''
+    Description:
+    Generates an empty JSON schema with predefined nodes and relationships.
+
+    Returns:
+
+    dict: JSON structure representing the knowledge graph schema.
+
+    '''
     json_schema = {
         "nodes":{
             "Company":[
