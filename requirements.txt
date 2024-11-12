@@ -1,8 +1,0 @@
-ipykernel
-ipywidgets
-neo4j
-openpyxl
-pandas
-python-dotenv
-pyreadr
-sentence-transformers
