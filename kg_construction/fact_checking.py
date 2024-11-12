@@ -1,10 +1,12 @@
 import os
 import csv
 import requests
-from collections.abc import Iterable
 import tempfile
-import graph_utils
 from collections import defaultdict
+from collections.abc import Iterable
+import networkx as nx
+import matplotlib.pyplot as plt
+import graph_utils
 
 __ID_VALUES__ = {}
 
@@ -121,7 +123,16 @@ Calls FactChecker API. Given an input graph and input edges (of the same relatio
 1. Generate patterns (GFCs) for the given relation and input graph.
 2. Checks each input edge against each found pattern.
 
-The pattern mining relies on Principal Closed World Assumption (PCWA) of the input graph, i.e. if the graph has at least one edge (V1)-[:R]->(V2), we assume that we have complete information of all (V1)-[:R]->(Vx). For example if the graph has two competitors of Apple, (Apple)-[:COMPETES_WITH]->(Google) and (Apple)-[:Competes_With]->(Samsung), anything not in the graph (e.g. (Apple)-[:COMPETES_WITH]->(Meta)) is considered false. Read more about GFCs in our [repository](https://github.com/001waiyan/GDRB), which was forked from the [original paper](https://github.com/001waiyan/GDRB/blob/master/2018-DASFAA-GFC-paper.pdf)'s repository for the purposes of this project.
+The pattern mining relies on Principal Closed World Assumption (PCWA) of the input graph,
+i.e. if the graph has at least one edge (V1)-[:R]->(V2),
+we assume that we have complete information of all (V1)-[:R]->(Vx).
+For example if the graph has two competitors of Apple,
+    (Apple)-[:COMPETES_WITH]->(Google) and
+    (Apple)-[:Competes_With]->(Samsung),
+anything not in the graph (e.g. (Apple)-[:COMPETES_WITH]->(Meta)) is considered false.
+Read more about GFCs in our [repository](https://github.com/001waiyan/GDRB),
+which was forked from the [original paper](https://github.com/001waiyan/GDRB/blob/master/2018-DASFAA-GFC-paper.pdf)'s repository
+for the purposes of this project.
 
 Parameters
 - graph_nodes_file: Path to TSV file containing graph nodes
@@ -352,3 +363,120 @@ class Pattern:
     def __repr__(self) -> str:
         return "Pattern(" + ",\n".join(f"({self.node_names[u]})-[:{edge_label}]->({self.node_names[v]})"
                                       for u, v, edge_label in self.edges) + ")"
+
+
+def visualize_rule(pattern: Pattern, rule_head: tuple[str, str, str]):
+    """
+    Visualize a single rule with its pattern (body) and head.
+    
+    Args:
+        pattern: Pattern object containing the rule body
+        rule_head: tuple of (src_label, dst_label, edge_label) representing the rule head
+    """
+    G = nx.DiGraph()
+    
+    for i, label in enumerate(pattern.node_labels):
+        G.add_node(i, label=label)
+    
+    # Add edges from the pattern
+    for src, dst, label in pattern.edges:
+        G.add_edge(src, dst, label=label, is_rule_head=False)
+    
+    # Add rule head edge (between anchored nodes)
+    G.add_edge(0, 1, label=rule_head[2], is_rule_head=True)
+    
+    plt.figure(figsize=(12, 8))
+    
+    pos = nx.spring_layout(G, k=1.5)
+    
+    # Calculate node size based on label length
+    node_sizes = [2000 for _ in range(len(pattern.node_labels))]
+    
+    # Draw nodes
+    node_colors = ['lightgreen' if i < 2 else 'lightblue' for i in range(len(pattern.node_labels))]
+    nx.draw_networkx_nodes(G, pos, node_color=node_colors, node_size=node_sizes)
+    
+    # Function to shorten edges to prevent overlap with nodes
+    def shorten_edge(pos, source, target, scale=0.8):
+        """Returns the position to shorten an edge so it doesn't overlap with nodes."""
+        source_pos = pos[source]
+        target_pos = pos[target]
+        
+        vx = target_pos[0] - source_pos[0]
+        vy = target_pos[1] - source_pos[1]
+        
+        norm = (vx**2 + vy**2)**0.5
+        
+        if norm != 0:
+            vx = vx / norm
+            vy = vy / norm
+        
+        start_x = source_pos[0] + vx * (1 - scale)
+        start_y = source_pos[1] + vy * (1 - scale)
+        end_x = target_pos[0] - vx * (1 - scale)
+        end_y = target_pos[1] - vy * (1 - scale)
+        
+        return (start_x, start_y), (end_x, end_y)
+
+    # Draw edges with shortened paths
+    for (u, v, d) in G.edges(data=True):
+        is_rule_head = d['is_rule_head']
+        start_pos, end_pos = shorten_edge(pos, u, v)
+        
+        # Create edge path
+        edge_path = plt.matplotlib.patches.FancyArrowPatch(
+            start_pos, end_pos,
+            arrowstyle='-|>',
+            connectionstyle='arc3,rad=0',
+            mutation_scale=20,
+            linestyle='dashed' if is_rule_head else 'solid',
+            color='red' if is_rule_head else 'black',
+            shrinkA=0,
+            shrinkB=0
+        )
+        plt.gca().add_patch(edge_path)
+    
+    # Draw node labels
+    nx.draw_networkx_labels(G, pos, 
+                          {i: f"{label}" if i < 2 else label 
+                           for i, label in enumerate(pattern.node_labels)})
+    
+    # Draw edge labels with different colors for pattern and rule head
+    edge_labels = {}
+    for (u, v, d) in G.edges(data=True):
+        start_pos, end_pos = shorten_edge(pos, u, v, scale=0.5)
+        edge_labels[(u, v)] = {
+            'label': d['label'],
+            'pos': ((start_pos[0] + end_pos[0])/2, (start_pos[1] + end_pos[1])/2),
+            'color': 'red' if d['is_rule_head'] else 'black'
+        }
+    
+    # Draw edge labels
+    for (u, v), label_info in edge_labels.items():
+        plt.text(label_info['pos'][0], label_info['pos'][1], 
+                label_info['label'],
+                color=label_info['color'],
+                horizontalalignment='center',
+                verticalalignment='center',
+                bbox=dict(facecolor='white', edgecolor='none', alpha=0.7))
+    
+    plt.title(f"Rule: {pattern.node_labels[0]} - {rule_head[2]} → {pattern.node_labels[1]}")
+    
+    plt.axis('off')
+    return plt
+
+
+def visualize_rules(rules_dict: dict):
+    """
+    Visualize all rules in the dictionary. Saves images in ./rules
+    
+    Args:
+        rules_dict: Dictionary mapping (src_label, dst_label, edge_label) to list of Patterns
+    """
+    if not os.path.exists('rules'):
+        os.makedirs('rules')
+    for rule_head, patterns in rules_dict.items():
+        for i, pattern in enumerate(patterns):
+            plt = visualize_rule(pattern, rule_head)
+            plt.savefig(f"rules/{rule_head[0]}_{rule_head[1]}_{rule_head[2]}_{i}.png")
+            plt.close()
