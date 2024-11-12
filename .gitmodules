@@ -1,0 +1,3 @@
+[submodule "GDRB"]
+	path = GDRB
+	url = https://github.com/001waiyan/GDRB.git

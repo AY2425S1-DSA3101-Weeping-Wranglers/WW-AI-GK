@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  # er-extraction:
+  #   build:
+  #     context: ./er_extraction
+  #     dockerfile: Dockerfile
+  #   volumes:
+  #     - ./output:/app/output
+  #   env_file: .env
+
+  factchecker-api:
+    build:
+      context: ./GDRB
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+
+  kg-construction:
+    build:
+      context: .
+      dockerfile: kg_construction/Dockerfile
+    volumes:
+      - ./er_extraction/merged_output.json:/app/er_extraction/merged_output.json
+    depends_on:
+      - factchecker-api
+    environment:
+      - FACTCHECKER_API_URL=http://factchecker-api:8080/api/factchecker/check
+    env_file: .env
+
+  # kg-query:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.kg-query
+  #   ports:
+  #     - "8501:8501"
+  #   volumes:
+  #     - ./output:/app/output:ro
+  #   depends_on:
+  #     - kg-construction
+  #   env_file: .env

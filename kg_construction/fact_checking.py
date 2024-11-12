@@ -10,6 +10,8 @@ import graph_utils
 
 __ID_VALUES__ = {}
 
+FACTCHECKER_API_URL = os.getenv('FACTCHECKER_API_URL', "http://localhost:8080/api/factchecker/check") 
+
 def extract_key_constraints() -> dict[str, str]:
     '''
     Extracts all key properties of nodes from graph
@@ -117,7 +119,7 @@ def fact_check(graph_nodes_file: str,
                min_conf: float = 0.1,
                max_size: int = 2,
                top_k: int = 50,
-               api_url: str = "http://localhost:8080/api/factchecker/check") -> dict:
+               api_url: str = FACTCHECKER_API_URL) -> dict:
     '''
 Calls FactChecker API. Given an input graph and input edges (of the same relation type), perform the following:
 1. Generate patterns (GFCs) for the given relation and input graph.
@@ -241,7 +243,7 @@ def fact_check_and_add(edges_to_add: tuple,
                        min_conf: float = 0.0001,
                        max_size: int = 2,
                        top_k: int = 10,
-                       api_url: str = "http://localhost:8080/api/factchecker/check"):
+                       api_url: str = FACTCHECKER_API_URL):
     
     '''
 Systematically fact checks and adds to the Neo4j database a list of edges, while maintaining PCWA of the graph. The edges to add are grouped by same source node and relation type (e.g. all COMPETES_WITH edges for the Apple node). Each group is fact checked using the FactChecker API and added one at a time to maintain PCWA.
