@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # er-extraction:
   #   build:
@@ -21,7 +19,8 @@ services:
       context: .
       dockerfile: kg_construction/Dockerfile
     volumes:
-      - ./er_extraction/merged_output.json:/app/er_extraction/merged_output.json
+      - ./er_extraction:/app/er_extraction:ro
+      - ./output/rules:/app/kg_construction/rules
     depends_on:
       - factchecker-api
     environment:

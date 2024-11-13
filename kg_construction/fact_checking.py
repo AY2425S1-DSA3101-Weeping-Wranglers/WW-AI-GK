@@ -5,6 +5,7 @@ import tempfile
 from collections import defaultdict
 from collections.abc import Iterable
 import networkx as nx
+import networkx.algorithms.isomorphism as iso
 import matplotlib.pyplot as plt
 import graph_utils
 
@@ -198,6 +199,31 @@ Returns a dictionary with the format:
         for file in files.values():
             file.close()
 
+class Pattern(nx.DiGraph):
+    def __init__(self, json_object: dict):
+        super().__init__()
+        for i, label in enumerate(tuple(json_object['nodes'])):
+            self.add_node(i, label=label)
+        for edge in json_object['edges']:
+            for edge_label in edge['edgeLabel'].split('&'):
+                self.add_edge(edge['srcId'], edge['dstId'], label=edge_label)
+        self.supp = json_object['supp']
+        self.conf = json_object['conf']
+    
+    def __eq__(self, value: object) -> bool:
+        if not isinstance(value, Pattern):
+            return False
+        nm = iso.categorical_node_match('label', None)
+        em = iso.categorical_edge_match('label', None)
+        return iso.is_isomorphic(self, value, nm, em)
+
+    def __hash__(self) -> int:
+        return hash(nx.weisfeiler_lehman_graph_hash(self, 'label', 'label'))
+    
+    def __repr__(self) -> str:
+        return "Pattern(" + ",\n".join(f"({self.nodes[u]['label']}{u})-[:{edge_label}]->({self.nodes[v]['label']}{v})"
+                                       for u, v, edge_label in self.edges.data("label")) + f",\nsupp={self.supp}, conf={self.conf})"
+
 
 def add_group_edges(node_keys: dict[str, str],
                     src_key_value: object,
@@ -283,7 +309,6 @@ The pattern mining relies on Principal Closed World Assumption (PCWA) of the inp
         add_group_edges(node_keys, src_key_value, src_label, dst_label, edge_label, uniq_dst_properties)
         print()
 
-    all_patterns = defaultdict(set)
     with tempfile.TemporaryDirectory() as tmpdirname:
         relations = extract_relations()
         graph_nodes = extract_nodes(node_keys)
@@ -316,7 +341,7 @@ The pattern mining relies on Principal Closed World Assumption (PCWA) of the inp
                                        graph_ontology_file,
                                        input_edges_file,
                                        min_supp, min_conf, max_size, top_k, api_url)
-            patterns = json_response['patterns']
+            patterns = set(map(Pattern, json_response['patterns']))
             print(f"{len(patterns)} patterns found for group.")
 
             filtered_edges = []
@@ -329,74 +354,79 @@ The pattern mining relies on Principal Closed World Assumption (PCWA) of the inp
                     filtered_edges.append((src_id, dst_id, edge_label))
             
             print(f"Adding {len(dst_properties)} filtered edges.")
-            
             if dst_properties:
                 add_group_edges(node_keys, src_key_value, src_label, dst_label, edge_label, dst_properties)
-
             # update tsv file with added edges
             write_tsv(graph_edges_file, filtered_edges, append=True)
-
-            all_patterns[(src_label, dst_label, edge_label)].update(map(Pattern, patterns))
             print()
+
+
+def extract_all_patterns(min_supp: float = 0.5,
+                         min_conf: float = 0.1,
+                         max_size: int = 2,
+                         top_k: int = 50,
+                         api_url: str = FACTCHECKER_API_URL) -> defaultdict[str, set]:
     
-    return all_patterns
+    all_patterns = defaultdict(set)
 
-class Pattern:
-    def __init__(self, json_object: dict):
-        self.supp = json_object['supp']
-        self.conf = json_object['conf']
-        self.node_labels = tuple(json_object['nodes'])
-        self.src_label = self.node_labels[0]
-        self.dst_label = self.node_labels [1]
-        self.node_names = tuple(f"{label}{i}" for i, label in enumerate(self.node_labels, 1))
-        edges = []
-        for edge in json_object['edges']:
-            for edge_label in edge['edgeLabel'].split('&'):
-                edges.append((edge['srcId'], edge['dstId'], edge_label))
-        edges.sort()
-        self.edges = tuple(edges)
-    
-    def __eq__(self, value: object) -> bool:
-        return isinstance(value, Pattern) and (self.node_labels, self.edges) == (value.node_labels, value.edges)
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        node_keys = extract_key_constraints()
+        relations = extract_relations()
+        graph_nodes = list(extract_nodes(node_keys))
+        graph_edges = extract_edges(node_keys, relations)
+        ontology = extract_ontology(node_keys)
 
-    def __hash__(self) -> int:
-        return hash((self.node_labels, self.edges))
-    
-    def __repr__(self) -> str:
-        return "Pattern(" + ",\n".join(f"({self.node_names[u]})-[:{edge_label}]->({self.node_names[v]})"
-                                      for u, v, edge_label in self.edges) + ")"
+        graph_nodes_file = os.path.join(tmpdirname, "graph_nodes.tsv")
+        graph_edges_file = os.path.join(tmpdirname, "graph_edges.tsv")
+        graph_ontology_file = os.path.join(tmpdirname, "graph_ontology.tsv")
+        input_edges_file = os.path.join(tmpdirname, "input_edges.tsv")
+
+        write_tsv(graph_nodes_file, graph_nodes)
+        write_tsv(graph_edges_file, graph_edges)
+        write_tsv(graph_ontology_file, ontology)
+
+        node_sample = {}
+        for node_id, node_label in graph_nodes:
+            node_sample[node_label] = node_id
+        
+        for src_label, dst_label, edge_label in relations:
+            print(f"Extracting patterns for ({src_label})-[:{edge_label}]->({dst_label})")
+            src_id = node_sample[src_label]
+            dst_id = node_sample[dst_label]
+            write_tsv(input_edges_file, ((src_id, dst_id, edge_label), ))
+            json_response = fact_check(graph_nodes_file,
+                                       graph_edges_file,
+                                       graph_ontology_file,
+                                       input_edges_file,
+                                       min_supp, min_conf, max_size, top_k, api_url)
+            patterns = set(map(Pattern, json_response['patterns']))
+            print(f"{len(patterns)} patterns found.")
+            all_patterns[edge_label].update(patterns)
+        return all_patterns
 
 
-def visualize_rule(pattern: Pattern, rule_head: tuple[str, str, str]):
+def visualize_rule(pattern: Pattern, rule_edge_label: str):
     """
     Visualize a single rule with its pattern (body) and head.
     
     Args:
         pattern: Pattern object containing the rule body
-        rule_head: tuple of (src_label, dst_label, edge_label) representing the rule head
+        rule_edge_label: Edge label of the rule head
     """
-    G = nx.DiGraph()
-    
-    for i, label in enumerate(pattern.node_labels):
-        G.add_node(i, label=label)
-    
-    # Add edges from the pattern
-    for src, dst, label in pattern.edges:
-        G.add_edge(src, dst, label=label, is_rule_head=False)
     
     # Add rule head edge (between anchored nodes)
-    G.add_edge(0, 1, label=rule_head[2], is_rule_head=True)
+    pattern.add_edge(0, 1, label=rule_edge_label, is_rule_head=True)
     
     plt.figure(figsize=(12, 8))
     
-    pos = nx.spring_layout(G, k=1.5)
+    pos = nx.spring_layout(pattern, k=1.5)
     
     # Calculate node size based on label length
-    node_sizes = [2000 for _ in range(len(pattern.node_labels))]
+    node_sizes = [2000 for _ in range(pattern.number_of_nodes())]
     
     # Draw nodes
-    node_colors = ['lightgreen' if i < 2 else 'lightblue' for i in range(len(pattern.node_labels))]
-    nx.draw_networkx_nodes(G, pos, node_color=node_colors, node_size=node_sizes)
+    node_colors = ['lightgreen' if i < 2 else 'lightblue' for i in range(pattern.number_of_nodes())]
+    nx.draw_networkx_nodes(pattern, pos, node_color=node_colors, node_size=node_sizes)
     
     # Function to shorten edges to prevent overlap with nodes
     def shorten_edge(pos, source, target, scale=0.8):
@@ -421,8 +451,8 @@ def visualize_rule(pattern: Pattern, rule_head: tuple[str, str, str]):
         return (start_x, start_y), (end_x, end_y)
 
     # Draw edges with shortened paths
-    for (u, v, d) in G.edges(data=True):
-        is_rule_head = d['is_rule_head']
+    for (u, v, d) in pattern.edges(data=True):
+        is_rule_head = d.get('is_rule_head', False)
         start_pos, end_pos = shorten_edge(pos, u, v)
         
         # Create edge path
@@ -439,18 +469,18 @@ def visualize_rule(pattern: Pattern, rule_head: tuple[str, str, str]):
         plt.gca().add_patch(edge_path)
     
     # Draw node labels
-    nx.draw_networkx_labels(G, pos, 
-                          {i: f"{label}" if i < 2 else label 
-                           for i, label in enumerate(pattern.node_labels)})
+    nx.draw_networkx_labels(pattern, pos,
+                            {i: f"{label}" if i < 2 else label
+                             for i, label in pattern.nodes.data('label')})
     
     # Draw edge labels with different colors for pattern and rule head
     edge_labels = {}
-    for (u, v, d) in G.edges(data=True):
+    for (u, v, d) in pattern.edges(data=True):
         start_pos, end_pos = shorten_edge(pos, u, v, scale=0.5)
         edge_labels[(u, v)] = {
             'label': d['label'],
             'pos': ((start_pos[0] + end_pos[0])/2, (start_pos[1] + end_pos[1])/2),
-            'color': 'red' if d['is_rule_head'] else 'black'
+            'color': 'red' if d.get('is_rule_head', False) else 'black'
         }
     
     # Draw edge labels
@@ -462,23 +492,26 @@ def visualize_rule(pattern: Pattern, rule_head: tuple[str, str, str]):
                 verticalalignment='center',
                 bbox=dict(facecolor='white', edgecolor='none', alpha=0.7))
     
-    plt.title(f"Rule: {pattern.node_labels[0]} - {rule_head[2]} → {pattern.node_labels[1]}")
+    plt.suptitle(f"Rule: {pattern.nodes[0]['label']} - {rule_edge_label} → {pattern.nodes[1]['label']}", fontsize=12)
+    plt.title(f"Support: {pattern.supp:.3f}, Confidence: {pattern.conf:.3f}", fontsize=10, pad=10)
     
     plt.axis('off')
+
+    pattern.remove_edge(0, 1)
     return plt
 
 
-def visualize_rules(rules_dict: dict):
+def visualize_rules(rules_dict: dict[str, Iterable[Pattern]]):
     """
     Visualize all rules in the dictionary. Saves images in ./rules
     
     Args:
-        rules_dict: Dictionary mapping (src_label, dst_label, edge_label) to list of Patterns
+        rules_dict: Dictionary mapping edge_label to collection of Patterns
     """
     if not os.path.exists('rules'):
         os.makedirs('rules')
-    for rule_head, patterns in rules_dict.items():
+    for rule_edge_label, patterns in rules_dict.items():
         for i, pattern in enumerate(patterns):
-            plt = visualize_rule(pattern, rule_head)
-            plt.savefig(f"rules/{rule_head[0]}_{rule_head[1]}_{rule_head[2]}_{i}.png")
+            plt = visualize_rule(pattern, rule_edge_label)
+            plt.savefig(f"rules/{pattern.nodes[0]['label']}_{rule_edge_label}_{pattern.nodes[1]['label']}_{i}.png")
             plt.close()

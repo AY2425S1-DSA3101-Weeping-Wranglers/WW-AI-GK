@@ -14,7 +14,7 @@ import pyreadr
 import numpy as np
 from sentence_transformers import SentenceTransformer
 import graph_utils
-from fact_checking import fact_check_and_add, visualize_rules
+from fact_checking import fact_check_and_add, extract_all_patterns, visualize_rules
 
 
 ######################
@@ -368,6 +368,8 @@ SET c.names =
     END,
     c.founded_year = $founded_year''', *companies)
 
+print()
+
 print("Preparing Company relationships")
 all_edges = []
 
@@ -377,6 +379,11 @@ for company_industry in is_involved_in_data:
     industry_name = company_industry['industry_name']
     company_industry['company_name'] = clean_names(company_industry['company_name'])
     company_industry['embedding'] = EMBEDDING_MODEL.encode(industry_name).tolist()
+produces_data = validated_data['relationships']['PRODUCES']
+for company_product in produces_data:
+    product_name = company_product['product_name']
+    company_product['company_name'] = clean_names(company_product['company_name'])
+    company_product['embedding'] = EMBEDDING_MODEL.encode(product_name).tolist()
 is_involved_in_edges = graph_utils.execute_query_with_params("""
 CALL db.index.fulltext.queryNodes('company_names_index', $company_name)
     YIELD node AS c, score AS company_score
@@ -386,7 +393,7 @@ WHERE company_score > 1
 AND industry_score > 0.7
 RETURN
     c.ticker AS ticker,
-    i.gics AS gics""", *is_involved_in_data)
+    i.gics AS gics""", *(is_involved_in_data + produces_data))
 for records, _, _ in is_involved_in_edges:
     for ticker, gics in records:
         all_edges.append((ticker, gics, "Company", "Industry", "IS_INVOLVED_IN", {}))
@@ -472,5 +479,8 @@ print()
 # Consistency Checking #
 ########################
 print("Consistency Checking and Adding Company Relationships...")
-patterns = fact_check_and_add(all_edges, min_supp=0.5, min_conf=0.1, top_k=50, max_size=2)
+fact_check_and_add(all_edges, min_supp=0.5, min_conf=0.1, top_k=50, max_size=2)
+
+print("Extracting Patterns from Final Graph...")
+patterns = extract_all_patterns(min_supp=0.5, min_conf=0.1, top_k=50, max_size=2)
 visualize_rules(patterns)
