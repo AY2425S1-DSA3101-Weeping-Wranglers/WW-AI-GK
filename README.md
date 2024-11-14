@@ -30,7 +30,7 @@ Entity resolution can be performed during this stage via **the ReFiNED Transform
 
 To scale up our ER Extraction Pipeline, we can build a distributed processing architecture that begins with **data ingestion into distributed storage systems** through the Hadoop Distributed File System or Amazon S3. These systems provide redundancy and fault tolerance for our large-scale unstructured data. We process this data using the **Spark DataFrame API**, which distributes aggregation tasks across multiple worker nodes for parallel processing. 
 We **batch our API requests** to minimize network overhead and maintain a **caching system** for frequently accessed nodes and queries. Our caching system can maintain frequently accessed data in memory using a Least Recently Used policy, which significantly reduces database load and improves response times.
-Third, we can achieve effective resource management through **integrating our Spark API with YARN**, which dynamically allocates resources based on current workload demands. Data can also be **partitioned**, segmenting information by company, region, and industry to ensure balanced workload distribution. 
+To achieve effective resource management, we **integrate our Spark API with YARN**, which dynamically allocates resources based on current workload demands. Data can also be **partitioned**, segmenting information by company, region, and industry to ensure balanced workload distribution. 
 
 
 ## Subtask 2: Knowledge Graph Construction and Verification
