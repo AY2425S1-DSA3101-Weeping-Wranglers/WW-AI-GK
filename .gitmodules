@@ -1,3 +1,6 @@
 [submodule "GDRB"]
 	path = GDRB
 	url = https://github.com/001waiyan/GDRB.git
+[submodule "chatbot"]
+	path = chatbot
+	url = https://github.com/vnnamng/Finetune-chatbot-cypher
