@@ -1,9 +1,10 @@
-from getpass import getpass
 import json
 import requests 
 import sqlite3
 import pandas as pd
 import re
+import os
+
 from bs4 import BeautifulSoup
 from googlesearch import search
 from yahooquery import Ticker
@@ -12,7 +13,7 @@ import random
 import warnings
 warnings.filterwarnings('ignore')
 
-TOKEN = getpass('Enter token: ')
+TOKEN = os.getenv("DIFFBOT_KEY")
 FIELDS = "entities,facts"
 HOST = "nl.diffbot.com"
 
@@ -235,7 +236,7 @@ def sec_10k_ner_rel_pipeline(ticker):
     tuple: DataFrames of entities and relationships extracted from 10-K sections.
     '''
 
-    dbpath = 'ecmdatabase.db'
+    dbpath = 'data/ecmdatabase.db'
     con = sqlite3.connect(f"file:{dbpath}?mode=ro", uri=True)
     with con:
         result = con.execute(f"SELECT * from companies WHERE stock_symbol = '{ticker}';")
@@ -340,6 +341,21 @@ def create_json_schema():
     return json_schema
 
 def create_company_node(name,ticker_code = None,founded_year = None):
+    '''
+    Description:
+    Creates a dictionary for a company node with optional ticker and founded year attributes.
+
+    Parameters:
+
+    name (str): Company name.
+    ticker_code (str, optional): Ticker code of the company.
+    founded_year (int, optional): Year the company was founded.
+
+    Returns:
+
+    dict: Dictionary containing the company node data.
+
+    '''
     c_node = {}
 
     c_node["name"] = name
@@ -353,6 +369,19 @@ def create_company_node(name,ticker_code = None,founded_year = None):
     return c_node
 
 def city_to_country(city):
+    '''
+    Description:
+    Fetches the country name for a given city by querying the Geonames website.
+
+    Parameters:
+
+    city (str): City name.
+
+    Returns:
+
+    str: Country name if found, otherwise Not Found.
+
+    '''
     response = requests.request("GET", f"https://www.geonames.org/search.html?q={city}&country=")
     country_raw = re.findall("/countries.*\\.html", response.text)
     if len(country_raw) != 0:
@@ -363,12 +392,40 @@ def city_to_country(city):
         return "Not Found"
 
 def country_to_continent(country_name):
+    '''
+    Description:
+    Converts a country name to its respective continent name.
+
+    Parameters:
+
+    country_name (str): Name of the country.
+
+    Returns:
+
+    str: Continent name.
+
+    '''
     country_alpha2 = pc.country_name_to_country_alpha2(country_name)
     country_continent_code = pc.country_alpha2_to_continent_code(country_alpha2)
     country_continent_name = pc.convert_continent_code_to_continent_name(country_continent_code)
     return country_continent_name
 
 def create_country_node(name,iso3=None,iso2=None, population = None, gdp = None, corporate_tax_rate = None, is_city = False):
+    '''
+    Description:
+    Creates a country node with optional fields and determines country details based on the is_city parameter.
+
+    Parameters:
+
+    name (str): Country name.
+    iso3, iso2, population, gdp, corporate_tax_rate (optional): Additional country details.
+    is_city (bool): Whether the name provided is a city (in which case, it will look up the country).
+
+    Returns:
+
+    dict: Country node details.
+
+    '''
     cnty_node = {}
     
     if is_city:
@@ -388,6 +445,19 @@ def create_country_node(name,iso3=None,iso2=None, population = None, gdp = None,
     return cnty_node
 
 def create_region_node(cnty_node):
+    '''
+    Description:
+    Creates a region node based on the country node provided.
+
+    Parameters:
+
+    cnty_node (dict): Country node data.
+
+    Returns:
+
+    dict: Region node data.
+    
+    '''
     reg_node = {}
     if cnty_node.get("iso2",None) is None:
         reg_node["name"] = "Not Found"
@@ -398,6 +468,22 @@ def create_region_node(cnty_node):
     return reg_node
 
 def create_industry_node(name,SIC_code = None, industry_group = None, subindustry_desc = None, primary_activity= None):
+
+    '''
+    Description:
+
+    Creates an industry node with optional attributes.
+
+    Parameters:
+
+    name (str): Industry name.
+    SIC_code, industry_group, subindustry_desc, primary_activity (optional): Additional industry details.
+
+    Returns:
+
+    dict: Industry node details.
+
+    '''
     ind_node = {}
     ind_node["name"] = name
     ind_node["SIC_code"] = SIC_code
@@ -407,11 +493,40 @@ def create_industry_node(name,SIC_code = None, industry_group = None, subindustr
     return ind_node
 
 def create_product_node(name):
+    '''
+    Description:
+    Creates a product node.
+
+    Parameters:
+
+    name (str): Product name.
+
+    Returns:
+
+    dict: Product node details.
+
+    '''
     pdt_node = {}
     pdt_node["name"] = name
     return pdt_node
 
 def create_hq_rel(c_node, cnty_node):
+    '''
+    Description:
+    Creates a "HEADQUARTERS_IN" relationship between a company and a country.
+
+    Parameters:
+
+    c_node (dict): Company node data.
+    cnty_node (dict): Country node data.
+
+    Returns:
+
+    dict: A dictionary with details about the "HEADQUARTERS_IN" relationship, namely
+    "c_node": The name of the company.
+    "cnty_node": The name of the country.
+    
+    '''
     hq_rel = {}
     hq_rel["company_name"] = c_node["name"]
     hq_rel["country_name"] = cnty_node["name"]
@@ -419,6 +534,24 @@ def create_hq_rel(c_node, cnty_node):
     return hq_rel
 
 def create_operates_in_country_rel(c_node, cnty_node):
+    '''
+    Description:
+    Generates a relationship dictionary that links a company with a country where it operates.
+
+    Parameters:
+
+    c_node (dict): A dictionary representing a company node, containing at least the "name" key.
+    cnty_node (dict): A dictionary representing a country node, containing at least the "name" key.
+
+    Returns:
+
+    oic_rel (dict): A dictionary with details about the "operates in country" relationship, including:
+    "company_name": Name of the company.
+    "country_name": Name of the country.
+    "net sales": Randomly generated net sales figure (between -30 million and 30 million).
+    "headcount": Randomly generated headcount (between 1 and 10,000).
+
+    '''
     oic_rel = {}
     oic_rel["company_name"] = c_node["name"]
     oic_rel["country_name"] = cnty_node["name"]
@@ -428,6 +561,23 @@ def create_operates_in_country_rel(c_node, cnty_node):
     return oic_rel
 
 def create_operates_in_region_rel(c_node, reg_node):
+    '''
+    Description:
+    Generates a relationship dictionary that links a company with a country where it operates.
+
+    Parameters:
+
+    c_node (dict): A dictionary representing a company node, containing at least the "name" key.
+    cnty_node (dict): A dictionary representing a country node, containing at least the "name" key.
+    Returns:
+
+    oic_rel (dict): A dictionary with details about the "operates in country" relationship, including:
+    "company_name": Name of the company.
+    "country_name": Name of the country.
+    "net sales": Randomly generated net sales figure (between -30 million and 30 million).
+    "headcount": Randomly generated headcount (between 1 and 10,000).
+
+    '''
     oir_rel = {}
     oir_rel["company_name"] = c_node["name"]
     oir_rel["region_name"] = reg_node["name"]
@@ -437,6 +587,20 @@ def create_operates_in_region_rel(c_node, reg_node):
     return oir_rel
 
 def create_is_in_rel(cnty_node, reg_node):
+    '''
+    Creates a relationship dictionary indicating that a country is part of a specific region.
+
+    Parameters:
+
+    cnty_node (dict): A dictionary representing a country node, containing at least the "name" key.
+    reg_node (dict): A dictionary representing a region node, containing at least the "name" key.
+    Returns:
+
+    is_in_rel (dict): A dictionary with details about the "is in region" relationship, including:
+    "country_name": Name of the country.
+    "region_name": Name of the region.
+
+    '''
     is_in_rel = {}
     is_in_rel["country_name"] = cnty_node["name"]
     is_in_rel["region_name"] = reg_node["name"]
@@ -446,6 +610,24 @@ def create_is_in_rel(cnty_node, reg_node):
 
 #partners, competitors, subsidiaries 
 def create_company_company_rel(c_node1, c_node2, type = None):
+    '''
+    Description:
+    Creates a relationship dictionary between two companies, which may represent partnerships, competition, or subsidiary relationships.
+
+    Parameters:
+
+    c_node1 (dict): A dictionary representing the first company node, containing at least the "name" key.
+    c_node2 (dict): A dictionary representing the second company node, containing at least the "name" key.
+    type (str, optional): Type of relationship (e.g., "partners", "competitors", or "subsidiary").
+
+    Returns:
+
+    c_c_rel (dict): A dictionary with details about the company-to-company relationship, including:
+    "company_name_1": Name of the first company.
+    "company_name_2": Name of the second company.
+    "type": Type of relationship, if specified.
+
+    '''
     c_c_rel = {}
     c_c_rel["company_name_1"] = c_node1["name"]
     c_c_rel["company_name_2"] = c_node2["name"]
@@ -454,12 +636,44 @@ def create_company_company_rel(c_node1, c_node2, type = None):
     return c_c_rel
 
 def create_in_industry_rel(c_node, ind_node):
+    '''
+    Description:
+    Generates a relationship dictionary linking a company to an industry in which it is involved.
+
+    Parameters:
+
+    c_node (dict): A dictionary representing a company node, containing at least the "name" key.
+    ind_node (dict): A dictionary representing an industry node, containing at least the "name" key.
+
+    Returns:
+
+    c_ind_rel (dict): A dictionary with details about the "is involved in industry" relationship, including:
+    "company_name": Name of the company.
+    "industry_name": Name of the industry.
+
+    '''
     c_ind_rel = {}
     c_ind_rel["company_name"] = c_node["name"]
     c_ind_rel["industry_name"] = ind_node["name"]
     return c_ind_rel
 
 def create_produces_rel(c_node, pdt_node):
+    '''
+    Description:
+    Creates a relationship dictionary representing that a company produces a specific product.
+
+    Parameters:
+
+    c_node (dict): A dictionary representing a company node, containing at least the "name" key.
+    pdt_node (dict): A dictionary representing a product node, containing at least the "name" key.
+
+    Returns:
+
+    c_pdt_rel (dict): A dictionary with details about the "produces" relationship, including:
+    "company_name": Name of the company.
+    "product_name": Name of the product.
+
+    '''
     c_pdt_rel = {}
     c_pdt_rel["company_name"] = c_node["name"]
     c_pdt_rel["product_name"] = pdt_node["name"]
@@ -467,7 +681,21 @@ def create_produces_rel(c_node, pdt_node):
     return c_pdt_rel
 
 def generate_json_schema(json, offset = 0):
-    dbpath = 'ecmdatabase.db'
+    '''
+    Description:
+    Populates a JSON schema with entities and relationships from SEC 10-K and Wikipedia pipelines for companies in the database.
+
+    Parameters:
+
+    json (dict): The initial JSON schema to be populated.
+    offset (int, optional): Starting offset for the database query.
+
+    Returns:
+
+    dict: JSON schema populated with nodes and relationships.
+    
+    '''
+    dbpath = 'data/ecmdatabase.db'
     con = sqlite3.connect(f"file:{dbpath}?mode=ro", uri=True)
 
     def fill_entities(ents, c_name):
@@ -562,8 +790,9 @@ try:
     with open('nasdaq_kg_schema.json', 'w') as f:
         json.dump(empty_schema, f)
         print("Schema generated successfully!")
-except:
+except Exception as error:
     print("Error encountered. Schema generated is incomplete.")
+    print(error)
     with open('nasdaq_kg_schema.json', 'w') as f:
         json.dump(empty_schema, f)
 

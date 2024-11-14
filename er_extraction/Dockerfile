@@ -3,7 +3,9 @@ FROM python:3.12.3
 WORKDIR /app
 
 ADD main_A.py .
-ADD ecmdatabase.db .
+
+RUN mkdir data
+COPY data/ecmdatabase.db data/
 
 COPY requirements.txt .
 
