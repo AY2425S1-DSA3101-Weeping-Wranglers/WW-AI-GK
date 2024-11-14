@@ -10,7 +10,7 @@ Through generating the knowledge graph, we hope to support investors by providin
 
 - **SEC 10-K Filings**: https://sec-api.io/resources/extract-textual-data-from-edgar-10-k-filings-using-python
   URLs of the top 40 NASDAQ companies were written to NASDAQ_10-K_urls.xlsx through referencing their CIK numbers, which were then used to extract 10-K filings using the SEC-API. The Form 1 and Form 7 sections were stored in a mySQL database and exported to sqlite3 file for persistent storage.
-  **Wikipedia Articles** Using the yahooquery library, the official websites of companies are retrieved and used to find their related Wikipedia pages, extracting relevant information using Beautiful Soup's HTML parser.
+- **Wikipedia Articles** Using the yahooquery library, the official websites of companies are retrieved and used to find their related Wikipedia pages, extracting relevant information using Beautiful Soup's HTML parser.
 - **M49 Codes**: https://unstats.un.org/unsd/methodology/m49/overview/
   Standardised region and country codes by The United Nations Statistics Division. These are used to augment our knowledge graph with country and region nodes, and the IS_IN relationships between them.
 - **Country Aliases**: https://www.kaggle.com/datasets/wbdill/country-aliaseslist-of-alternative-country-names
