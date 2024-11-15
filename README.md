@@ -90,7 +90,7 @@ This constructs the knowledge graph in the Neo4j Aura Instance from the nodes an
    4. For Hostname, enter the part after "neo4j+s://" of your NEO4J_URI (saved in your `.env` file). For example if your NEO4J_URI is "neo4j+s://abcde123.databases.neo4j.io", your Hostname will be "abcde123.databases.neo4j.io".
    5. For Password, enter your NEO4J_PASSWORD (saved in your `.env` file).
    6. Click Connect.
-   7. On the left panel stated 'Dashboard', click create ("+") then "Import".
+   7. On the left panel, click create ("+") then "Import".
    8. Import the provided JSON (Found in `chatbot/neodash_dashboard.json`) into the "Import Dashboard" textbox. 
    9. Hit "Import" to load.
 The imported dashboard will be automatically populated with predefined Cypher queries. You can now execute these queries to interact with your data and visualize your knowledge graph. Feel free to create your own dashboard, tailored to your business needs.
