@@ -82,7 +82,7 @@ This extracts entities and relationships using the Diffbot API and saves them in
 
 ### KG Construction
 
-Check that your AuraDB instance has been initialised and is running from [here](console.neo4j.io).
+Check that your AuraDB instance has been initialised and is running from [here](console.neo4j.io), before running this command:
 
 ```bash
 docker compose -f compose.kg-construction.yaml up --build --abort-on-container-exit
