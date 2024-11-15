@@ -84,18 +84,16 @@ This constructs the knowledge graph in the Neo4j Aura Instance from the nodes an
 
 ### KG Dashboard 
 **Connect to Neo4j NeoDash**:
-   1. Access NeoDash from a web browser at [https://neodash.graphapp.io](https://neodash.graphapp.io)
-   2. Use the `neo4j+s` protocol for encrypted, secure connections.
-   3. Provide the Aura database's URI, username, and password for authentication.
-   4. On the left panel stated 'Dashboard', click create ("+") then "Import".
-   5. Copy and paste the provided JSON (`dashboard.json`) into the "Import Dashboard" textbox. 
-   6. Hit "Import" to load.
-The imported dashboard will be automatically populated with predefined Cypher queries.You can now execute these queries to interact with your data and visualize your knowledge graph.
-
-#### Additional Notes
-- **Security**: Always ensure that your database credentials are kept secure and never share them publicly.
-- **Customization**: You can modify the dashboard settings or Cypher queries as needed to fit your specific use case.
-- **Troubleshooting**: If you encounter connection issues, verify your Neo4j Aura credentials and ensure your internet connection is stable.
+   1. Access NeoDash from a web browser at [https://neodash.graphapp.io](https://neodash.graphapp.io).
+   2. Click "New Dashboard"
+   3. Use the `neo4j+s` protocol.
+   4. For Hostname, enter the part after "neo4j+s://" of your NEO4J_URI (saved in your `.env` file). For example if your NEO4J_URI is "neo4j+s://abcde123.databases.neo4j.io", your Hostname will be "abcde123.databases.neo4j.io".
+   5. For Password, enter your NEO4J_PASSWORD (saved in your `.env` file).
+   6. Click Connect.
+   7. On the left panel stated 'Dashboard', click create ("+") then "Import".
+   8. Import the provided JSON (Found in `chatbot/neodash_dashboard.json`) into the "Import Dashboard" textbox. 
+   9. Hit "Import" to load.
+The imported dashboard will be automatically populated with predefined Cypher queries. You can now execute these queries to interact with your data and visualize your knowledge graph. Feel free to create your own dashboard, tailored to your business needs.
 
 ### Streamlit App
 
