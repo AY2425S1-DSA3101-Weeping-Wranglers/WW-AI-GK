@@ -44,7 +44,7 @@ To achieve effective resource management, we **integrate our Spark API with YARN
 git clone --recurse-submodules https://github.com/AY2425S1-DSA3101-Weeping-Wranglers/WW-AI-GK
 ```
 
-    Alternatively if you already cloned the project and did not include`--recurse-submodules`, run this:
+  Alternatively if you already cloned the project and did not include`--recurse-submodules`, run this:
 
 ```bash
 git submodule update --init
@@ -63,15 +63,15 @@ git submodule update --init
 1. Create a free Neo4j account [here](https://neo4j.com/product/auradb/).
 2. Create a new AuraDB Free Instance.
 3. When prompted, click "download". This downloads a `.txt` file with the credentials of your AuraDB instance.
-4. Copy the variables in the `.txt` file into `.env.`
+4. Copy the variables in the `.txt` file into `.env`.
 
 ### 4. OpenAI
 
-1. Create an OpenAI account [here]([https://platform.openai.com](https://platform.openai.com))
+1. Create an OpenAI account [here]([https://platform.openai.com]).
 2. Once logged in, click the settings icon on the top right.
 3. In the left sidebar, click on **Billing** to access the billing settings.
 4. Enter your payment information if you haven’t already set up a billing account. The minimum initial credit purchase is $5.
-5. Create new secret key [here]([https://platform.openai.com/account/api-keys](https://platform.openai.com/account/api-keys))
+5. Create new secret key [here]([https://platform.openai.com/account/api-keys]).
 6. A new API key will be generated for you. Copy this key.
 7. Add the ley as an environment variable in `.env`: `OPENAI_KEY=<YOUR_OPENAI_KEY>`
 
