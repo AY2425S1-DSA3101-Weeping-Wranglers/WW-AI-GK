@@ -38,6 +38,7 @@ git submodule update --init
 4. Copy the variables in the `.txt` file into `.env`.
 
 ### 4. OpenAI
+Note: You may skip this step if you do not intend to use the Chatbot feature.
 
 1. Create an OpenAI account [here](https://platform.openai.com).
 2. Once logged in, click the settings icon on the top right.
@@ -87,7 +88,7 @@ This constructs the knowledge graph in the Neo4j Aura Instance from the nodes an
 docker compose -f compose.chatbot.yaml up --build
 ```
 
-This runs a streamlit app that is connected to the Neo4j Aura Instance.
+This runs a streamlit app that is connected to the Neo4j Aura Instance. Requires an OpenAI API key if you intend to use the chatbot feature.
 Access the app at [http://localhost:8501/](http://localhost:8501/).
 
 ## Contributors
