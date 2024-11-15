@@ -46,7 +46,7 @@ Note: You may skip this step if you do not intend to use the Chatbot feature.
 4. Enter your payment information if you haven’t already set up a billing account. The minimum initial credit purchase is $5.
 5. Create new secret key [here](https://platform.openai.com/account/api-keys).
 6. A new API key will be generated for you. Copy this key.
-7. Add the ley as an environment variable in `.env`: `OPENAI_KEY=<YOUR_OPENAI_KEY>`
+7. Add the key as an environment variable in `.env`: `OPENAI_KEY=<YOUR_OPENAI_KEY>`
 
 ### 5. Final `.env` file
 
