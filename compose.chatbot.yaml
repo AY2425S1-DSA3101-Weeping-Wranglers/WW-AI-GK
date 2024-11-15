@@ -1,0 +1,8 @@
+services:
+  chatbot:
+    build:
+      context: ./chatbot
+      dockerfile: Dockerfile
+    ports:
+      - "8501:8501"
+    env_file: .env

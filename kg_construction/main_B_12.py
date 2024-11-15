@@ -309,7 +309,8 @@ print()
 # Adding Extracted Company Data #
 #################################
 print("Processing Extracted Company Data...")
-with open('../er_extraction/merged_output.json', 'r') as file:
+extracted_file = os.getenv("ER_EXTRACTION_OUTPUT", "merged_output.json")
+with open(f'../output/{extracted_file}', 'r') as file:
     merged_json = json.load(file)
 
 def is_valid_ticker(ticker_code):

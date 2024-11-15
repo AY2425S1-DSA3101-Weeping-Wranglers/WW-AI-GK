@@ -785,14 +785,18 @@ def generate_json_schema(json, offset = 0):
 
 empty_schema = create_json_schema()
 print("Generating schema")
+
+if not os.path.exists('output'):
+    os.makedirs('output')
+output_file = os.getenv("ER_EXTRACTION_OUTPUT", "nasdaq_kg_schema.json")
 try:
     kg_json = generate_json_schema(empty_schema, offset = 0)
-    with open('nasdaq_kg_schema.json', 'w') as f:
+    with open(f'output/{output_file}', 'w') as f:
         json.dump(empty_schema, f)
         print("Schema generated successfully!")
 except Exception as error:
     print("Error encountered. Schema generated is incomplete.")
     print(error)
-    with open('nasdaq_kg_schema.json', 'w') as f:
+    with open('output/nasdaq_kg_schema.json', 'w') as f:
         json.dump(empty_schema, f)
 

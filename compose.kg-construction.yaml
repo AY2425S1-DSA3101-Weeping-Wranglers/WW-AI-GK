@@ -1,0 +1,20 @@
+services:
+  factchecker-api:
+    build:
+      context: ./GDRB
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+
+  kg-construction:
+    build:
+      context: .
+      dockerfile: kg_construction/Dockerfile
+    volumes:
+      - ./output:/app/output
+    depends_on:
+      - factchecker-api
+    env_file: .env
+    environment:
+      - ER_EXTRACTION_OUTPUT=merged_output.json
+      - FACTCHECKER_API_URL=http://factchecker-api:8080/api/factchecker/check

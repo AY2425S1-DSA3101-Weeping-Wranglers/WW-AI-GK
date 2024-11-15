@@ -23,9 +23,6 @@ COPY data/UNSD_m49.csv data/
 COPY data/country_aliases.csv data/
 COPY data/corp_tax_rate.xlsx data/
 
-RUN mkdir er_extraction
-# COPY er_extraction/merged_output.json er_extraction/
-
 WORKDIR /app/kg_construction
 
 CMD ["python", "-u", "main_B_12.py"]
