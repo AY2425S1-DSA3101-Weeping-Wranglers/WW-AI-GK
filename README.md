@@ -16,7 +16,7 @@ Through generating the knowledge graph, we hope to support investors by providin
 git clone --recurse-submodules https://github.com/AY2425S1-DSA3101-Weeping-Wranglers/WW-AI-GK
 ```
 
-  Alternatively if you already cloned the project and did not include`--recurse-submodules`, run this:
+Alternatively if you already cloned the project and did not include`--recurse-submodules`, run this:
 
 ```bash
 git submodule update --init
