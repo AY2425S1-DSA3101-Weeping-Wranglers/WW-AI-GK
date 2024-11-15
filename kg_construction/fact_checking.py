@@ -508,10 +508,10 @@ def visualize_rules(rules_dict: dict[str, Iterable[Pattern]]):
     Args:
         rules_dict: Dictionary mapping edge_label to collection of Patterns
     """
-    if not os.path.exists('rules'):
-        os.makedirs('rules')
+    if not os.path.exists('../output/rules'):
+        os.makedirs('../output/rules')
     for rule_edge_label, patterns in rules_dict.items():
         for i, pattern in enumerate(patterns):
             plt = visualize_rule(pattern, rule_edge_label)
-            plt.savefig(f"rules/{pattern.nodes[0]['label']}_{rule_edge_label}_{pattern.nodes[1]['label']}_{i}.png")
+            plt.savefig(f"../output/rules/{pattern.nodes[0]['label']}_{rule_edge_label}_{pattern.nodes[1]['label']}_{i}.png")
             plt.close()

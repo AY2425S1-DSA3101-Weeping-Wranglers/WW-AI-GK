@@ -1,0 +1,10 @@
+services:
+  er-extraction:
+    build:
+      context: .
+      dockerfile: er_extraction/Dockerfile
+    volumes:
+      - ./output:/app/output
+    env_file: .env
+    environment:
+      - ER_EXTRACTION_OUTPUT=nasdaq_kg_schema.json

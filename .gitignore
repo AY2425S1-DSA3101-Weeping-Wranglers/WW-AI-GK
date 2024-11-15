@@ -165,5 +165,4 @@ data/sec_submissions/
 
 .DS_Store
 Neo4j-*.txt
-/output
-/kg_construction/rules
+
