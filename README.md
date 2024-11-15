@@ -6,6 +6,10 @@ The NASDAQ exchange, which tracks over 3,000 stocks with a focus on tech and hig
 
 Through generating the knowledge graph, we hope to support investors by providing a comprehensive view of a company's ecosystem, partners, and competitors, which can serve as a holistic basis to assess a company’s fundamental value, sphere of influence, and growth potential.
 
+<p href="https://www.youtube.com/watch?v=ZJv7Ch9aOY0" align="center">
+   <img src="http://img.youtube.com/vi/ZJv7Ch9aOY0/0.jpg" alt="Video Presentation">
+</p>
+
 ## Project Setup
 
 ### 1. Repository Setup
