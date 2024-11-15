@@ -42,7 +42,7 @@ Note: You may skip this step if you do not intend to use the Chatbot feature.
 
 1. Create an OpenAI account [here](https://platform.openai.com).
 2. Once logged in, click the settings icon on the top right.
-3. In the left sidebar, click on **Billing** to access the billing settings.
+3. In the left sidebar, click on Billing to access the billing settings.
 4. Enter your payment information if you haven’t already set up a billing account. The minimum initial credit purchase is $5.
 5. Create new secret key [here](https://platform.openai.com/account/api-keys).
 6. A new API key will be generated for you. Copy this key.
@@ -82,7 +82,7 @@ docker compose -f compose.kg-construction.yaml up --build --abort-on-container-e
 
 This constructs the knowledge graph in the Neo4j Aura Instance from the nodes and relationships found in `output/merged_output.json`.
 
-### Chatbot
+### Streamlit App
 
 ```bash
 docker compose -f compose.chatbot.yaml up --build
