@@ -405,9 +405,11 @@ for entry in headquarters_data:
     entry['company_name'] = clean_names(entry['company_name'])
 headquarters_edges = graph_utils.execute_query_with_params("""
 CALL db.index.fulltext.queryNodes('company_names_index', $company_name)
-    YIELD node AS company
+    YIELD node AS company, score AS company_score
 CALL db.index.fulltext.queryNodes('country_aliases_index', $country_name)
-    YIELD node AS country   
+    YIELD node AS country, score AS country_score
+WHERE company_score > 1
+AND country_score > 1
 RETURN company.ticker AS ticker, country.iso3 AS iso3""", *headquarters_data)
 for records, _, _ in headquarters_edges:
     for ticker, iso3 in records:
@@ -419,9 +421,11 @@ for entry in operates_data:
     entry['net_sales'] = entry.pop('net sales')
 operates_edges = graph_utils.execute_query_with_params("""
 CALL db.index.fulltext.queryNodes('company_names_index', $company_name)
-    YIELD node AS company
+    YIELD node AS company, score AS company_score
 CALL db.index.fulltext.queryNodes('country_aliases_index', $country_name)
-    YIELD node AS country   
+    YIELD node AS country, score AS country_score
+WHERE company_score > 1
+AND country_score > 1
 RETURN
     company.ticker AS ticker,
     country.iso3 AS iso3,
@@ -439,9 +443,11 @@ for entry in company_competes:
     entry['company_name_2'] = clean_names(entry['company_name_2'])
 competes_edges = graph_utils.execute_query_with_params("""
 CALL db.index.fulltext.queryNodes('company_names_index', $company_name_1)
-    YIELD node AS company1
+    YIELD node AS company1, score AS c1_score
 CALL db.index.fulltext.queryNodes('company_names_index', $company_name_2)
-    YIELD node AS company2
+    YIELD node AS company2, score AS c2_score
+WHERE c1_score > 1
+AND c2_score > 1
 RETURN company1.ticker AS ticker1, company2.ticker AS ticker2""", *company_competes)
 for records, _, _ in competes_edges:
     for ticker1, ticker2 in records:
@@ -453,9 +459,11 @@ for entry in company_subsidiary:
     entry['company_name_2'] = clean_names(entry['company_name_2'])
 subsidiary_edges = graph_utils.execute_query_with_params("""
 CALL db.index.fulltext.queryNodes('company_names_index', $company_name_1)
-    YIELD node AS company1
+    YIELD node AS company1, score AS c1_score
 CALL db.index.fulltext.queryNodes('company_names_index', $company_name_2)
-    YIELD node AS company2
+    YIELD node AS company2, score AS c2_score
+WHERE c1_score > 1
+AND c2_score > 1
 RETURN company1.ticker AS ticker1, company2.ticker AS ticker2""", *company_subsidiary)
 for records, _, _ in subsidiary_edges:
     for ticker1, ticker2 in records:
@@ -467,9 +475,11 @@ for entry in company_supplies:
     entry['company_name_2'] = clean_names(entry['company_name_2'])
 subsidiary_edges = graph_utils.execute_query_with_params("""
 CALL db.index.fulltext.queryNodes('company_names_index', $company_name_1)
-    YIELD node AS company1
+    YIELD node AS company1, score AS c1_score
 CALL db.index.fulltext.queryNodes('company_names_index', $company_name_2)
-    YIELD node AS company2
+    YIELD node AS company2, score AS c2_score
+WHERE c1_score > 1
+AND c2_score > 1
 RETURN company1.ticker AS ticker1, company2.ticker AS ticker2""", *company_supplies)
 for records, _, _ in subsidiary_edges:
     for ticker1, ticker2 in records:
